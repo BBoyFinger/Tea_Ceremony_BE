@@ -17,17 +17,18 @@ app.use(express.urlencoded({ limit: "50mb", extended: true })); // Tăng giới 
 // Define the port number from environment variable or default to 8081
 const PORT: number = parseInt(process.env.PORT || "8081", 10);
 
-const allowedOrigins = ["https://tea-ware-fe.vercel.app"]; // Không có dấu "/"
+// CORS Configuration
+const allowedOrigins = ['https://tea-ware-fe.vercel.app'];
 
 const corsOptions = {
   origin: function (origin: any, callback: any) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true, 
+  credentials: true,  // Cho phép gửi thông tin xác thực (cookies, etc.)
 };
 
 app.use(cors(corsOptions));
