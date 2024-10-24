@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es6", // or higher
+    "module": "commonjs", // for Node.js
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*", "types/**/*.d.ts"],
+  "exclude": ["node_modules"]
+}
