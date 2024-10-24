@@ -19,7 +19,8 @@ const PORT: number = parseInt(process.env.PORT || "8081", 10);
 
 app.use(
   cors({
-    origin: "*",
+    origin: "https://tea-ware-fe.vercel.app/",
+    credentials: true
   })
 );
 app.use(express.json());
