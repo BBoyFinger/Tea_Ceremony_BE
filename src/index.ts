@@ -17,12 +17,19 @@ app.use(express.urlencoded({ limit: "50mb", extended: true })); // Tăng giới 
 // Define the port number from environment variable or default to 8081
 const PORT: number = parseInt(process.env.PORT || "8081", 10);
 
-app.use(
-  cors({
-    origin: "https://tea-ware-fe.vercel.app/",
-    credentials: true
-  })
-);
+const allowedOrigins = ["https://tea-ware-fe.vercel.app"]; // Không có dấu "/"
+
+const corsOptions = {
+  origin: function (origin: any, callback: any) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
