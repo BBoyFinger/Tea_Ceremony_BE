@@ -31,7 +31,8 @@ const corsOptions = {
   credentials: true,  // Cho phép gửi thông tin xác thực (cookies, etc.)
 };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors({ origin: "http://localhost:3000" , credentials: true}));
 app.use(express.json());
 app.use(cookieParser());
 
