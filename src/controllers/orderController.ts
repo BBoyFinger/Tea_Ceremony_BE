@@ -7,7 +7,8 @@ import HttpStatusCode from "../utils/HttpStatusCode";
 const orderController = {
   createOrder: async (req: Request, res: Response) => {
     try {
-      const { userId, productId, quantity } = req.body;
+      const { userId, productId, quantity, shippingAddress, totalPrice } =
+        req.body;
 
       // check user and product
       const user = await UserModel.findById(userId);
@@ -23,6 +24,8 @@ const orderController = {
         user: userId,
         product: productId,
         quantity,
+        shippingAddress: shippingAddress,
+        totalPrice: totalPrice,
       });
       await order.save();
       res.status(HttpStatusCode.Created).json({
