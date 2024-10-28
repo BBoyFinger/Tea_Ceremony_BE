@@ -6,6 +6,7 @@ import { productController } from "../controllers/productController";
 import orderController from "../controllers/orderController";
 import addToCartModel from "../models/cartProduct";
 import blogController from "../controllers/blogController";
+import paymentController from "../controllers/paymentController";
 
 const router = express.Router();
 
@@ -77,5 +78,9 @@ router.get("/blog/:id", blogController.getBlogById);
 router.put("/blog/:id", authMiddleware, blogController.updateBlog);
 router.delete("/blogs", authMiddleware, blogController.deleteBlogs);
 router.get("/blogs/search", blogController.searchBlogs);
+
+// Zalo Pay
+router.post("/payment/create-payment", paymentController.createPayment);
+
 
 export default router;
