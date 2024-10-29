@@ -68,7 +68,7 @@ router.get("/products/product-featured", productController.getFeaturedProducts);
 router.post("/order", authMiddleware, orderController.createOrder);
 router.put("/order/:id", authMiddleware, orderController.updateOrder);
 router.delete("/order", authMiddleware, orderController.deleteOrders);
-router.get("/order", orderController.getAllOrders);
+router.get("/orders", orderController.getAllOrders);
 router.get("/order/:id", orderController.getOrderById);
 
 //blog
