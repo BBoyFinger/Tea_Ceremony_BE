@@ -13,28 +13,27 @@ const config = {
 
 const paymentController = {
   createPayment: async (req: Request, res: Response) => {
-    const embed_data = {
-      redirecturl: "http://localhost:3000/checkout"
-    };
+    const embed_data = JSON.stringify({
+      redirecturl: "http://localhost:3000/checkout",
+    });
 
-    
-    console.log("Helolo")
-
-    const items = [{}];
+    const items = JSON.stringify([{ name: "sample item" }]);
     const transID = Math.floor(Math.random() * 1000000);
+
     const order = {
       app_id: config.app_id,
-      app_trans_id: `${moment().format("YYMMDD")}_${transID}`, // translation missing: vi.docs.shared.sample_code.comments.app_trans_id
+      app_trans_id: `${moment().format("YYMMDD")}_${transID}`,
       app_user: "user123",
-      app_time: Date.now(), // miliseconds
-      item: JSON.stringify(items),
-      embed_data: JSON.stringify(embed_data),
+      app_time: Date.now(),
+      item: items,
+      embed_data: embed_data,
       amount: 50000,
       description: `Lazada - Payment for the order #${transID}`,
       bank_code: "",
       mac: "",
     };
 
+    // Tạo chữ ký MAC
     const data =
       config.app_id +
       "|" +
@@ -49,23 +48,25 @@ const paymentController = {
       order.embed_data +
       "|" +
       order.item;
-    const mac = crypto
-      .createHmac("sha256", config.key1)
+
+    order.mac = crypto
+      .createHmac("sha256", config.key2)
       .update(data)
       .digest("hex");
 
-    order.mac = mac;
-
     try {
       // Gửi yêu cầu tạo thanh toán tới Zalo Pay
-      const response = await axios.post(config.endpoint, data);
+      const response = await axios.post(config.endpoint, order);
       if (response.data.return_code === 1) {
         res.status(200).json({ paymentUrl: response.data.order_url });
       } else {
         res.status(400).json({ message: response.data.return_message });
       }
-    } catch (error) {
-      res.status(500).json({ message: "Lỗi tạo đơn hàng thanh toán" });
+    } catch (error: any) {
+      const errorMessage = error.response ? error.response.data : error.message;
+      res
+        .status(500)
+        .json({ message: "Lỗi tạo đơn hàng thanh toán", error: errorMessage });
     }
   },
 };

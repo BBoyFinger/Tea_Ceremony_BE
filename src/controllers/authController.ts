@@ -121,6 +121,7 @@ const authController = {
       const tokenOption = {
         httpOnly: true,
         secure: true,
+        sameSite: "none" as const,
       };
 
       // Trả về kết quả đăng nhập thành công
@@ -144,6 +145,7 @@ const authController = {
 
   userDetail: async (req: Request, res: Response): Promise<Response> => {
     try {
+      console.log("User ID:", req.userId);
       const userDetail = await UserModel.findById(req.userId).select(
         "-password"
       );
@@ -165,6 +167,7 @@ const authController = {
       });
     }
   },
+
   userLogout: async (req: Request, res: Response): Promise<Response> => {
     try {
       res.clearCookie("token");
