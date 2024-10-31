@@ -145,7 +145,6 @@ const authController = {
 
   userDetail: async (req: Request, res: Response): Promise<Response> => {
     try {
-      console.log("User ID:", req.userId);
       const userDetail = await UserModel.findById(req.userId).select(
         "-password"
       );
@@ -330,6 +329,7 @@ const authController = {
   countAddToCart: async (req: Request, res: Response): Promise<Response> => {
     try {
       const userId = req.userId;
+      console.log("first login", userId);
       const count = await addToCartModel.countDocuments({
         userId: userId,
       });
