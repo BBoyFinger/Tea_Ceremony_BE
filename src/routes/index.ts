@@ -41,6 +41,8 @@ router.post(
   authController.deleteAddToCartProduct
 );
 
+router.post("/change-password", authMiddleware, authController.changePassword);
+
 //Category
 router.post("/category", authMiddleware, categoryController.addCategory);
 router.put("/category/:id", authMiddleware, categoryController.editCategory);
@@ -81,6 +83,5 @@ router.get("/blogs/search", blogController.searchBlogs);
 
 // Zalo Pay
 router.post("/payment/create-payment", paymentController.createPayment);
-
 
 export default router;

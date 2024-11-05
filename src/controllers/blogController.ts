@@ -2,6 +2,10 @@ import { Request, Response } from "express";
 import HttpStatusCode from "../utils/HttpStatusCode";
 import BlogModel from "../models/blogModel";
 
+interface Query {
+  title?: string;
+}
+
 const blogController = {
   createBlog: async (req: Request, res: Response): Promise<Response> => {
     try {
@@ -52,8 +56,12 @@ const blogController = {
   },
 
   getAllBlogs: async (req: Request, res: Response): Promise<Response> => {
+    const { title } = req.query as Query;
+
     try {
-      const blogs = await BlogModel.find();
+      const filters: any = {};
+      if (title) filters.title = { $regex: title, $options: "i" }; // Tìm kiếm theo tên
+      const blogs = await BlogModel.find(filters);
 
       return res.status(HttpStatusCode.Created).json({
         message: "Get all Blog successfully!",

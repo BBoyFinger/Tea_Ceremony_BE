@@ -263,15 +263,16 @@ const authController = {
     try {
       const userSession = req.userId;
 
-      const { userId, email, name, role, status } = req.body;
+      const { userId, email, name, role, status, phone, address } = req.body;
 
       const payload = {
         ...(email && { email: email }),
         ...(name && { name: name }),
+        ...(phone && { phone: phone }),
+        ...(address && { address: address }),
         ...(role && { role: role }),
         ...(status && { status: status }),
       };
-
       const updateUser = await UserModel.findByIdAndUpdate(userId, payload);
 
       return res.status(HttpStatusCode.OK).json({
@@ -418,6 +419,46 @@ const authController = {
         message: error.message || error,
         error: true,
         sucess: false,
+      });
+    }
+  },
+
+  changePassword: async (req: Request, res: Response) => {
+    const userId = req.userId; // Assuming userId is set in the request, e.g., via middleware
+    const { currentPassword, newPassword } = req.body;
+
+    try {
+      const user = await UserModel.findById(userId);
+      if (!user) {
+        return res.status(HttpStatusCode.NotFound).json({
+          message: "User not found",
+        });
+      }
+
+      // Check if the current password is correct
+      const isMatch = await bcrypt.compare(
+        currentPassword,
+        user?.password as string
+      );
+      if (!isMatch) {
+        return res.status(HttpStatusCode.Unauthorized).json({
+          message: "Current password is incorrect",
+        });
+      }
+
+      // Hash the new password
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(newPassword, salt);
+
+      await user.save();
+
+      return res.status(HttpStatusCode.OK).json({
+        message: "Password updated successfully",
+      });
+    } catch (error: any) {
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: "An error occurred while updating the password",
+        error: error.message,
       });
     }
   },
