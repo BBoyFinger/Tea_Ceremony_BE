@@ -41,11 +41,25 @@ const OrderSchema: Schema = new Schema(
       enum: ["Credit Card", "PayPal", "Cash On Delivery"],
     },
     shippingAddress: {
-      address: { type: String, required: true },
-      city: { type: String, required: true },
-      postalCode: { type: String, required: true },
-      country: { type: String, required: true },
+      province: { type: String },
+      district: { type: String },
+      ward: { type: String },
+      detail: { type: String },
+      name: { type: String },
+      phone: { type: String },
     },
+    paymentResult: {
+      id: String,
+      status: String,
+      update_time: String,
+      email_address: String,
+    },
+    order_code: String,
+    to_ward_code: String,
+    to_district_id: Number,
+    token: String,
+
+    cancelOrder: Boolean,
   },
   { timestamps: true }
 );

@@ -1,74 +1,111 @@
 import { Request, Response } from "express";
+import OrderModel from "../models/orderModel";
+import querystring from "qs";
 import crypto from "crypto";
-import axios from "axios";
-import moment from "moment";
+import sha256 from "sha256";
+import dateFormat from "dateformat";
 
-// APP INFO
-const config = {
-  app_id: "2553",
-  key1: "sdngKKJmqEMzvh5QQcdD2A9XBSKUNaYn",
-  key2: "trMrHtvjo6myautxDUiAcYsVtaeQ8nhf",
-  endpoint: "https://sb-openapi.zalopay.vn/v2/create",
+const tmnCode = process.env.VNP_TMN_CODE as string;
+const secretKey = process.env.VNP_SECRET_KEY as string; // Ensure this is set in your environment
+const url = process.env.VNP_URL as string;
+const returnUrl = process.env.VNP_RETURN_URL as string;
+
+export const createPayment = async (req: Request, res: Response) => {
+  let vnpUrl = url;
+  const date = new Date();
+  const ipAddr = req.ip || "127.0.0.1"; // Use request IP or fallback
+  const createDate = dateFormat(date, "yyyymmddHHmmss");
+
+  let vnp_Params: Record<string, string> = {
+    vnp_Version: "2.1.0",
+    vnp_Command: "pay",
+    vnp_TmnCode: tmnCode,
+    vnp_Locale: "vn",
+    vnp_CurrCode: "VND",
+    vnp_TxnRef: "1231Sdasd",
+    vnp_OrderInfo: "Test",
+    vnp_OrderType: "topup",
+    vnp_Amount: (100000 * 100).toString(), // Amount * 100
+    vnp_ReturnUrl: returnUrl,
+    vnp_IpAddr: ipAddr,
+    vnp_CreateDate: createDate,
+    vnp_BankCode: "Ncb",
+  };
+
+  vnp_Params = sortObject(vnp_Params);
+  const signData = querystring.stringify(vnp_Params, { encode: false });
+  const hmac = crypto.createHmac("sha512", secretKey);
+  const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+  vnp_Params["vnp_SecureHash"] = signed;
+  vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
+
+  console.log(vnpUrl);
+  res.status(200).json({ code: "00", data: vnpUrl });
 };
 
-const paymentController = {
-  createPayment: async (req: Request, res: Response) => {
-    const embed_data = JSON.stringify({
-      redirecturl: "http://localhost:3000/checkout",
-    });
+export const returnPayment = async (req: Request, res: Response) => {
+  console.log("returnPayment");
+  try {
+    let vnp_Params = req.query as Record<string, string>;
+    const secureHash = vnp_Params.vnp_SecureHash;
 
-    const items = JSON.stringify([{ name: "sample item" }]);
-    const transID = Math.floor(Math.random() * 1000000);
+    delete vnp_Params.vnp_SecureHash;
+    delete vnp_Params.vnp_SecureHashType;
 
-    const order = {
-      app_id: config.app_id,
-      app_trans_id: `${moment().format("YYMMDD")}_${transID}`,
-      app_user: "user123",
-      app_time: Date.now(),
-      item: items,
-      embed_data: embed_data,
-      amount: 50000,
-      description: `Lazada - Payment for the order #${transID}`,
-      bank_code: "",
-      mac: "",
-    };
+    vnp_Params = sortObject(vnp_Params);
+    const signData =
+      secretKey + querystring.stringify(vnp_Params, { encode: false });
+    const checkSum = sha256(signData);
 
-    // Tạo chữ ký MAC
-    const data =
-      config.app_id +
-      "|" +
-      order.app_trans_id +
-      "|" +
-      order.app_user +
-      "|" +
-      order.amount +
-      "|" +
-      order.app_time +
-      "|" +
-      order.embed_data +
-      "|" +
-      order.item;
+    const id = vnp_Params.vnp_TxnRef;
 
-    order.mac = crypto
-      .createHmac("sha256", config.key2)
-      .update(data)
-      .digest("hex");
-
-    try {
-      // Gửi yêu cầu tạo thanh toán tới Zalo Pay
-      const response = await axios.post(config.endpoint, order);
-      if (response.data.return_code === 1) {
-        res.status(200).json({ paymentUrl: response.data.order_url });
+    if (secureHash === checkSum) {
+      console.log("if 1");
+      if (vnp_Params.vnp_ResponseCode === "00") {
+        console.log("if 2");
+        res.status(200).json({ code: vnp_Params.vnp_ResponseCode });
       } else {
-        res.status(400).json({ message: response.data.return_message });
+        const DeleteOrder = await OrderModel.findById(id);
+        if (DeleteOrder) {
+          await DeleteOrder.deleteOne({ _id: id });
+        }
+        res.status(200).json({ code: vnp_Params.vnp_ResponseCode });
       }
-    } catch (error: any) {
-      const errorMessage = error.response ? error.response.data : error.message;
-      res
-        .status(500)
-        .json({ message: "Lỗi tạo đơn hàng thanh toán", error: errorMessage });
+    } else {
+      console.log("else");
+      res.status(200).json({ code: "97" });
     }
-  },
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-export default paymentController;
+export const inpPayment = async (req: Request, res: Response) => {
+  console.log("inpPayment");
+  let vnp_Params = req.query as Record<string, string>;
+  const secureHash = vnp_Params.vnp_SecureHash;
+
+  delete vnp_Params.vnp_SecureHash;
+  delete vnp_Params.vnp_SecureHashType;
+
+  vnp_Params = sortObject(vnp_Params);
+
+  const signData =
+    secretKey + querystring.stringify(vnp_Params, { encode: false });
+  const checkSum = sha256(signData);
+
+  if (secureHash === checkSum) {
+    res.status(200).json({ RspCode: "00", Message: "success" });
+  } else {
+    res.status(200).json({ RspCode: "97", Message: "Fail checksum" });
+  }
+};
+
+function sortObject(obj: Record<string, string>): Record<string, string> {
+  const sorted: Record<string, string> = {};
+  const keys = Object.keys(obj).sort();
+  keys.forEach((key) => {
+    sorted[key] = encodeURIComponent(obj[key]).replace(/%20/g, "+");
+  });
+  return sorted;
+}

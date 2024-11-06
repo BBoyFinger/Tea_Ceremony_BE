@@ -294,16 +294,28 @@ const authController = {
       const { productId } = req.body;
       const user = req.userId;
 
-      const isProductAvailable = await addToCartModel.findOne({ productId });
+      // Tìm sản phẩm trong giỏ hàng của người dùng
+      const existingCartItem = await addToCartModel.findOne({
+        productId,
+        userId: user,
+      });
 
-      if (isProductAvailable) {
+      if (existingCartItem) {
+        // Nếu sản phẩm đã tồn tại, tăng quantity lên 1
+        existingCartItem.quantity = existingCartItem.quantity ?? 0;
+        existingCartItem.quantity += 1;
+
+        await existingCartItem.save();
+
         return res.status(HttpStatusCode.OK).json({
-          message: "Already exist in Add to cart",
-          success: false,
-          error: true,
+          message: "Product quantity updated in cart!",
+          data: existingCartItem,
+          success: true,
+          error: false,
         });
       }
 
+      // Nếu sản phẩm chưa tồn tại, thêm sản phẩm mới vào giỏ hàng
       const payload = {
         productId: productId,
         quantity: 1,
@@ -323,7 +335,7 @@ const authController = {
       return res.status(HttpStatusCode.InternalServerError).json({
         message: error.message || error,
         error: true,
-        sucess: false,
+        success: false,
       });
     }
   },

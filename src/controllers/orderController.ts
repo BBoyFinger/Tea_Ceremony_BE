@@ -37,9 +37,10 @@ const orderController = {
       });
     }
   },
+
   getAllOrders: async (req: Request, res: Response) => {
     try {
-      const orders = await OrderModel.find()
+      const orders = await OrderModel.find({}).sort({ createdAt: -1 })
         .populate("user", "name")
         .populate("product", "productName price");
       res
