@@ -4,6 +4,7 @@ import cors from "cors";
 import connectDb from "./config/db";
 import router from "./routes";
 import cookieParser from "cookie-parser";
+import axios from "axios";
 
 // Initialize dotenv to load environment variables
 dotenv.config();
@@ -31,9 +32,71 @@ const corsOptions = {
   credentials: true, // Cho phép gửi thông tin xác thực (cookies, etc.)
 };
 
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
 
-// app.use(cors(corsOptions));
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.get("/api/provinces", async (req, res) => {
+  try {
+    const response = await axios.get(
+      "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province",
+      {
+        headers: {
+          token: process.env.GHN_API_TOKEN, // Use the token from environment variables
+        },
+      }
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch provinces" });
+  }
+});
+
+// Fetch districts based on province ID
+app.get("/api/districts", async (req, res) => {
+  const { province_id } = req.query; // Get province_id from query parameters
+  try {
+    const response = await axios.get(
+      "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district",
+      {
+        headers: {
+          token: process.env.GHN_API_TOKEN, // Use the token from environment variables
+        },
+        params: {
+          province_id,
+        },
+      }
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
+// Fetch wards based on district ID
+app.get("/api/wards", async (req, res) => {
+  const { district_id } = req.query; // Get district_id from query parameters
+  try {
+    const response = await axios.get(
+      "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward",
+      {
+        headers: {
+          token: process.env.GHN_API_TOKEN, // Use the token from environment variables
+        },
+        params: {
+          district_id,
+        },
+      }
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch wards" });
+  }
+});
 
 app.use(express.json());
 app.use(cookieParser());
