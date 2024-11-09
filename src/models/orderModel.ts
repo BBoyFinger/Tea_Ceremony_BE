@@ -35,11 +35,7 @@ const OrderSchema: Schema = new Schema(
       enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
       default: "Pending",
     },
-    paymentMethod: {
-      type: String,
-      required: true,
-      enum: ["Credit Card", "PayPal", "Cash On Delivery"],
-    },
+    paymentMethod: String,
     shippingAddress: {
       province: { type: String },
       district: { type: String },

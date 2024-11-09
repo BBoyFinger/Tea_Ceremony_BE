@@ -94,8 +94,8 @@ const orderController = {
     try {
       const orders = await OrderModel.find({})
         .sort({ createdAt: -1 })
-        .populate("user", "name")
-        .populate("product", "productName price");
+        // .populate("user", "name")
+        // .populate("product", "productName price");
       res
         .status(HttpStatusCode.OK)
         .json({ message: "Get All Order Successfully!", data: orders });
