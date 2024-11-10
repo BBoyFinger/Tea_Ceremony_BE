@@ -15,7 +15,7 @@ const returnUrl = process.env.VNP_RETURN_URL as string;
 
 const paymentController = {
   createPayment: async (req: Request, res: Response) => {
-    
+    console.log(tmnCode, secretKey);
     let vnpUrl = url;
     const date = new Date();
     const ipAddr = req.ip || "127.0.0.1"; // Use request IP or fallback

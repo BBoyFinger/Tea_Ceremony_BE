@@ -41,7 +41,11 @@ router.post(
   authMiddleware,
   authController.deleteAddToCartProduct
 );
-
+router.delete(
+  "/removeProductCart",
+  authMiddleware,
+  authController.removeAllProductsFromCart
+);
 router.post("/change-password", authMiddleware, authController.changePassword);
 
 //Category

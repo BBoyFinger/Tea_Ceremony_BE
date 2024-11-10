@@ -1,6 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 import { IOrder } from "../utils/type";
 
+const generateOrderCode = () => {
+  return Math.random().toString(36).substring(2, 10).toUpperCase();
+};
+
 const OrderSchema: Schema = new Schema(
   {
     user: {
@@ -50,7 +54,10 @@ const OrderSchema: Schema = new Schema(
       update_time: String,
       email_address: String,
     },
-    order_code: String,
+    order_code: {
+      type: String,
+      default: generateOrderCode,
+    },
     to_ward_code: String,
     to_district_id: Number,
     token: String,
@@ -59,6 +66,13 @@ const OrderSchema: Schema = new Schema(
   },
   { timestamps: true }
 );
+
+OrderSchema.pre("save", function (next) {
+  if (!this.order_code) {
+    this.order_code = generateOrderCode();
+  }
+  next();
+});
 
 const OrderModel = mongoose.model<IOrder>("Order", OrderSchema);
 export default OrderModel;

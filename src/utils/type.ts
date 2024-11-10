@@ -1,14 +1,16 @@
 import mongoose from "mongoose";
 
-export interface IUser {
+// Define the IUser interface
+export interface IUser extends Document {
   name?: string;
   email: string;
   password?: string;
-  address: string;
-  phone: string;
-  pictureImg: string;
-  role: string;
-  status: string;
+  phone?: string;
+  address?: string;
+  pictureImg?: string;
+  cart: any[]; // Adjust the type based on your cart structure
+  status?: string;
+  role?: string;
 }
 
 export interface Account {

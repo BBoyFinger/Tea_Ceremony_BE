@@ -434,6 +434,34 @@ const authController = {
       });
     }
   },
+  removeAllProductsFromCart: async (req: Request, res: Response) => {
+    try {
+      const userId = req.userId; // Assuming user ID is passed as a URL parameter
+      console.log(userId);
+      if (!userId) {
+        return res.status(HttpStatusCode.BadRequest).json({
+          message: "User ID is required",
+        });
+      }
+
+      // Delete all cart items for the user
+      const result = await addToCartModel.deleteMany({ userId });
+
+      if (result.deletedCount === 0) {
+        return res.status(HttpStatusCode.NotFound).json({
+          message: "No products found in cart for this user",
+        });
+      }
+
+      res.status(HttpStatusCode.OK).json({
+        message: "All products removed from cart successfully",
+      });
+    } catch (error: any) {
+      res.status(HttpStatusCode.InternalServerError).json({
+        message: error.message,
+      });
+    }
+  },
 
   changePassword: async (req: Request, res: Response) => {
     const userId = req.userId; // Assuming userId is set in the request, e.g., via middleware

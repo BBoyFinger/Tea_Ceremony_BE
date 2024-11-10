@@ -94,8 +94,16 @@ const orderController = {
     try {
       const orders = await OrderModel.find({})
         .sort({ createdAt: -1 })
-        // .populate("user", "name")
-        // .populate("product", "productName price");
+        .populate("user", "name")
+        .populate({
+          path: "orderItems",
+          populate: {
+            path: "product",
+            model: "Product", // Ensure this matches your Product model name
+            select: "productName price images", // Select fields you want to include
+          },
+        });
+
       res
         .status(HttpStatusCode.OK)
         .json({ message: "Get All Order Successfully!", data: orders });
