@@ -263,7 +263,8 @@ const authController = {
     try {
       const userSession = req.userId;
 
-      const { userId, email, name, role, status, phone, address } = req.body;
+      const { userId, email, name, role, status, phone, address, pictureImg } =
+        req.body;
 
       const payload = {
         ...(email && { email: email }),
@@ -272,6 +273,7 @@ const authController = {
         ...(address && { address: address }),
         ...(role && { role: role }),
         ...(status && { status: status }),
+        ...(pictureImg && { pictureImg: pictureImg }),
       };
       const updateUser = await UserModel.findByIdAndUpdate(userId, payload);
 
