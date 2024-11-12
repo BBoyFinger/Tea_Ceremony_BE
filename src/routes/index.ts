@@ -78,6 +78,8 @@ router.delete("/order", authMiddleware, orderController.deleteOrders);
 router.get("/orders", orderController.getAllOrders);
 router.get("/order/:id", orderController.getOrderById);
 
+router.get('/orders/user/:userId', orderController.getOrdersByUserId);
+
 //blog
 router.post("/blog", authMiddleware, blogController.createBlog);
 router.get("/blogs", blogController.getAllBlogs);
@@ -90,5 +92,6 @@ router.get("/blogs/search", blogController.searchBlogs);
 router.post("/payment", paymentController.createPayment);
 router.get("/inpPayment", paymentController.inpPayment);
 router.get("/vnpay_return", paymentController.returnPayment);
+
 
 export default router;

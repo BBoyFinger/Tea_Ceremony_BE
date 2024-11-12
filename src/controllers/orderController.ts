@@ -129,6 +129,21 @@ const orderController = {
     }
   },
 
+  getOrdersByUserId: async (req: Request, res: Response) => {
+    try {
+      const orders = await OrderModel.find({ user: req.params.userId }) // Find orders by user ID
+        .populate("user", "name") // Populate user details
+        .populate("orderItems.product", "productName price"); // Populate product details in orderItems
+
+      res
+        .status(HttpStatusCode.OK)
+        .json({ message: "Get Orders Successfully!", data: orders });
+    } catch (error: any) {
+      res.status(HttpStatusCode.InternalServerError).json({
+        message: error.message,
+      });
+    }
+  },
   updateOrder: async (req: Request, res: Response) => {
     try {
       const order = await OrderModel.findByIdAndUpdate(
