@@ -75,10 +75,11 @@ router.get("/products/product-featured", productController.getFeaturedProducts);
 router.post("/order", authMiddleware, orderController.createOrder);
 router.put("/order/:id", authMiddleware, orderController.updateOrder);
 router.delete("/order", authMiddleware, orderController.deleteOrders);
-router.get("/orders", orderController.getAllOrders);
+router.get("/orders", authMiddleware, orderController.getAllOrders);
 router.get("/order/:id", orderController.getOrderById);
 
 router.get('/orders/user/:userId', orderController.getOrdersByUserId);
+router.patch('/orders/:id/confirm', authMiddleware,  orderController.confirmOrder);
 
 //blog
 router.post("/blog", authMiddleware, blogController.createBlog);

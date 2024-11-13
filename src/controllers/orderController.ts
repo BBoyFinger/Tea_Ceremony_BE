@@ -130,6 +130,32 @@ const orderController = {
     }
   },
 
+  confirmOrder: async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params; // Get the order ID from the request parameters
+      const updatedOrder = await OrderModel.findByIdAndUpdate(
+        id,
+        { status: "Processing" }, // Update the status to "Delivering"
+        { new: true } // Return the updated document
+      );
+
+      if (!updatedOrder) {
+        return res.status(HttpStatusCode.NotFound).json({
+          message: "Order not found",
+        });
+      }
+
+      res.status(HttpStatusCode.OK).json({
+        message: "Order status updated successfully",
+        data: updatedOrder,
+      });
+    } catch (error: any) {
+      res.status(HttpStatusCode.InternalServerError).json({
+        message: error.message,
+      });
+    }
+  },
+
   getOrdersByUserId: async (req: Request, res: Response) => {
     try {
       const orders = await OrderModel.find({ user: req.params.userId }) // Find orders by user ID
