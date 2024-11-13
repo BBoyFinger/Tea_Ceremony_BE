@@ -74,12 +74,16 @@ router.get("/products/product-featured", productController.getFeaturedProducts);
 //Order
 router.post("/order", authMiddleware, orderController.createOrder);
 router.put("/order/:id", authMiddleware, orderController.updateOrder);
-router.delete("/order", authMiddleware, orderController.deleteOrders);
+router.delete("/order/:orderId", orderController.deleteOrder);
 router.get("/orders", authMiddleware, orderController.getAllOrders);
 router.get("/order/:id", orderController.getOrderById);
 
-router.get('/orders/user/:userId', orderController.getOrdersByUserId);
-router.patch('/orders/:id/confirm', authMiddleware,  orderController.confirmOrder);
+router.get("/orders/user/:userId", orderController.getOrdersByUserId);
+router.patch(
+  "/orders/:id/confirm",
+  authMiddleware,
+  orderController.confirmOrder
+);
 
 //blog
 router.post("/blog", authMiddleware, blogController.createBlog);
@@ -93,6 +97,5 @@ router.get("/blogs/search", blogController.searchBlogs);
 router.post("/payment", paymentController.createPayment);
 router.get("/inpPayment", paymentController.inpPayment);
 router.get("/vnpay_return", paymentController.returnPayment);
-
 
 export default router;

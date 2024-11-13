@@ -193,36 +193,21 @@ const orderController = {
     }
   },
 
-  deleteOrders: async (req: Request, res: Response) => {
-    try {
-      const { ids } = req.body;
-      if (ids.length === 1) {
-        const deleteOrder = await OrderModel.findByIdAndDelete(ids[0]);
-        if (!deleteOrder) {
-          return res.status(HttpStatusCode.NotFound).json({
-            message: "Order not found!",
-          });
-        }
-        return res.status(HttpStatusCode.OK).json({
-          message: "Delete Order successfully!",
-        });
-      }
-      const order = await OrderModel.deleteMany({
-        _id: { $in: ids },
-      });
-      if (!order) {
-        return res
-          .status(HttpStatusCode.NotFound)
-          .json({ message: "Order not found" });
-      }
+  deleteOrder: async (req: Request, res: Response) => {
+    const { orderId } = req.params;
+    const userId = req.userId; // Assuming user ID is available in req.user
 
-      res.status(HttpStatusCode.NoContent).json({
-        data: "Delete order successfully!",
-      });
-    } catch (error: any) {
-      res.status(HttpStatusCode.InternalServerError).json({
-        message: error.message,
-      });
+    try {
+      const order = await OrderModel.findById(orderId);
+
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+      await order.deleteOne();
+
+      res.status(200).json({ message: "Order deleted successfully", order });
+    } catch (error) {
+      res.status(500).json({ message: "Server error", error });
     }
   },
 };

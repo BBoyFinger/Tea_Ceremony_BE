@@ -12,7 +12,6 @@ const secretKey = process.env.VNP_SECRET_KEY as string; // Ensure this is set in
 const url = process.env.VNP_URL as string;
 const returnUrl = process.env.VNP_RETURN_URL as string;
 
-
 const paymentController = {
   createPayment: async (req: Request, res: Response) => {
     console.log(tmnCode, secretKey);
@@ -76,7 +75,6 @@ const paymentController = {
           res.status(200).json({ code: vnp_Params.vnp_ResponseCode });
         }
       } else {
-        console.log("else");
         res.status(200).json({ code: "97" });
       }
     } catch (error: any) {
