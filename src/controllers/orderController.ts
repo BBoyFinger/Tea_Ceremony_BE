@@ -116,7 +116,8 @@ const orderController = {
 
   getOrderById: async (req: Request, res: Response) => {
     try {
-      const order = await OrderModel.findById(req.params.id)
+      const user = req.userId;
+      const order = await OrderModel.findById(user)
         .populate("user", "name")
         .populate("product", "productName price");
       res
@@ -133,7 +134,7 @@ const orderController = {
     try {
       const orders = await OrderModel.find({ user: req.params.userId }) // Find orders by user ID
         .populate("user", "name") // Populate user details
-        .populate("orderItems.product", "productName price"); // Populate product details in orderItems
+        .populate("orderItems.product", "productName price images "); // Populate product details in orderItems
 
       res
         .status(HttpStatusCode.OK)
