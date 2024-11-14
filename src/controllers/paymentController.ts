@@ -5,6 +5,7 @@ import crypto from "crypto";
 import sha256 from "sha256";
 import { format } from "date-fns";
 import * as dotenv from "dotenv";
+import { v4 as uuidv4 } from 'uuid';
 dotenv.config();
 
 const tmnCode = process.env.VNP_TMN_CODE as string;
@@ -12,29 +13,42 @@ const secretKey = process.env.VNP_SECRET_KEY as string; // Ensure this is set in
 const url = process.env.VNP_URL as string;
 const returnUrl = process.env.VNP_RETURN_URL as string;
 
+
+// Ngân hàng	NCB
+// Số thẻ	9704198526191432198
+// Tên chủ thẻ	NGUYEN VAN A
+// Ngày phát hành	07/15
+// Mật khẩu OTP	123456
+const uniqueTxnRef = uuidv4();
+
 const paymentController = {
   createPayment: async (req: Request, res: Response) => {
-    console.log(tmnCode, secretKey);
     let vnpUrl = url;
     const date = new Date();
-    const ipAddr = req.ip || "127.0.0.1"; // Use request IP or fallback
-    const createDate = format(date, "yyyyMMddHHmmss"); // Use date-fns to format the date
+    const ipAddr = req.ip || "127.0.0.1";
+    const createDate = format(date, "yyyyMMddHHmmss");
+
+    // Generate a unique transaction reference
+    const uniqueTxnRef = uuidv4();
+    console.log("Generated UUID for transaction:", uniqueTxnRef);
 
     let vnp_Params: Record<string, string> = {
-      vnp_Version: "2.1.0",
-      vnp_Command: "pay",
-      vnp_TmnCode: tmnCode,
-      vnp_Locale: "vn",
-      vnp_CurrCode: "VND",
-      vnp_TxnRef: "1231Sdasd",
-      vnp_OrderInfo: "Test",
-      vnp_OrderType: "topup",
-      vnp_Amount: (100000 * 100).toString(), // Amount * 100
-      vnp_ReturnUrl: returnUrl,
-      vnp_IpAddr: ipAddr,
-      vnp_CreateDate: createDate,
-      vnp_BankCode: "Ncb",
+        vnp_Version: "2.1.0",
+        vnp_Command: "pay",
+        vnp_TmnCode: tmnCode,
+        vnp_Locale: "vn",
+        vnp_CurrCode: "VND",
+        vnp_TxnRef: uniqueTxnRef,
+        vnp_OrderInfo: "Test",
+        vnp_OrderType: "topup",
+        vnp_Amount: (100000 * 100).toString(),
+        vnp_ReturnUrl: returnUrl,
+        vnp_IpAddr: ipAddr,
+        vnp_CreateDate: createDate,
+        vnp_BankCode: "Ncb",
     };
+
+    console.log("VNPay Parameters:", vnp_Params);
 
     vnp_Params = sortObject(vnp_Params);
     const signData = querystring.stringify(vnp_Params, { encode: false });
@@ -43,9 +57,10 @@ const paymentController = {
     vnp_Params["vnp_SecureHash"] = signed;
     vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
 
-    console.log(vnpUrl);
+    console.log("Generated VNPay URL:", vnpUrl);
     res.status(200).json({ code: "00", data: vnpUrl });
-  },
+},
+
   returnPayment: async (req: Request, res: Response) => {
     console.log("returnPayment");
     try {
