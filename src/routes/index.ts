@@ -8,6 +8,7 @@ import addToCartModel from "../models/cartProduct";
 import blogController from "../controllers/blogController";
 import paymentControlle from "../controllers/paymentController";
 import paymentController from "../controllers/paymentController";
+import commentController from "../controllers/commentController";
 
 const router = express.Router();
 
@@ -97,5 +98,10 @@ router.get("/blogs/search", blogController.searchBlogs);
 router.post("/payment", paymentController.createPayment);
 router.get("/inpPayment", paymentController.inpPayment);
 router.get("/vnpay_return", paymentController.returnPayment);
+
+//Comment
+router.post("/createComment", commentController.addComment);
+router.get("/comments/:productId", commentController.getComments);
+router.post("/reply/:commentId", commentController.replyComment);
 
 export default router;
