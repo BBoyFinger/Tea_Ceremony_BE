@@ -103,5 +103,12 @@ router.get("/vnpay_return", paymentController.returnPayment);
 router.post("/createComment", commentController.addComment);
 router.get("/comments/:productId", commentController.getComments);
 router.post("/reply/:commentId", commentController.replyComment);
+router.delete(
+  "/comments/:commentId",
+  authMiddleware,
+  commentController.deleteComment
+);
+
+router.delete('/comments/:commentId/replies/:replyId', authMiddleware, commentController.deleteReply);
 
 export default router;
