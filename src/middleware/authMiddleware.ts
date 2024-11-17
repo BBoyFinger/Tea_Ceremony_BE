@@ -6,6 +6,7 @@ import jwt, { JsonWebTokenError, JwtPayload } from "jsonwebtoken";
 declare module "express-serve-static-core" {
   interface Request {
     userId: string;
+    role: string;
   }
 }
 
@@ -16,6 +17,8 @@ export const authMiddleware = (
 ) => {
   // Get the token from the cookies
   const token = req.cookies?.token;
+
+  
 
   if (!token) {
     return res.status(HttpStatusCode.Unauthorized).json({
@@ -54,6 +57,7 @@ export const authMiddleware = (
           typeof decoded._id === "string"
         ) {
           req.userId = decoded._id; // Safely access _id if it's a JwtPayload
+          req.role = decoded.role; 
         } else {
           return res
             .status(403)
