@@ -67,34 +67,34 @@ export const productController = {
       page = "1",
       limit = "10",
     } = req.query as Query;
-
-    // Chuyển đổi page và limit sang số nguyên
+  
     const pageNumber = parseInt(page);
     const limitNumber = parseInt(limit);
-
-    const skip = (pageNumber - 1) * limitNumber; // Tính toán số bản ghi cần bỏ qua
-
-    // Tạo bộ lọc động
+  
+    // Calculate skip and limit based on the page number
+    const skip = pageNumber === 1 ? 0 : 20; // Skip 0 for the first page, 10 for the second page
+    const limitToUse = pageNumber === 1 ? limitNumber : 0; // Limit to 10 for the first page, undefined for the second page
+  
     const filters: any = {};
-    if (productName) filters.name = { $regex: productName, $options: "i" }; // Tìm kiếm theo tên
+    if (productName) filters.name = { $regex: productName, $options: "i" };
     if (category) filters.category = category;
     if (availability) filters.availability = availability === "instock";
-
+  
     try {
-      const totalProducts = await ProductModel.countDocuments(filters); // Đếm tổng số sản phẩm thỏa mãn bộ lọc
-
+      const totalProducts = await ProductModel.countDocuments(filters);
+  
       const products = await ProductModel.find(filters)
         .populate("category")
         .sort({ createdAt: -1 })
-        .skip(skip) // Số lượng bản ghi bỏ qua
-        .limit(limitNumber); // Giới hạn số lượng bản ghi
-
+        .skip(skip)
+        .limit(limitToUse);
+  
       return res.status(HttpStatusCode.OK).json({
         message: "Get product successfully!",
         data: products,
-        totalProducts, // Tổng số sản phẩm thỏa mãn
-        totalPages: Math.ceil(totalProducts / limitNumber), // Tổng số trang
-        currentPage: pageNumber, // Trang hiện tại
+        totalProducts,
+        totalPages: Math.ceil(totalProducts / limitNumber),
+        currentPage: pageNumber,
       });
     } catch (error) {
       return res.status(HttpStatusCode.InternalServerError).json({
