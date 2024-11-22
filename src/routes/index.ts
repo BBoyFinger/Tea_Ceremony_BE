@@ -78,6 +78,7 @@ router.put("/order/:id", authMiddleware, orderController.updateOrder);
 router.delete("/order/:orderId", orderController.deleteOrder);
 router.get("/orders", authMiddleware, orderController.getAllOrders);
 router.get("/order/:id", orderController.getOrderById);
+router.get("/orderPaypal", orderController.getAllOrderPaypal);
 
 router.get("/orders/user/:userId", orderController.getOrdersByUserId);
 router.patch(
@@ -109,6 +110,10 @@ router.delete(
   commentController.deleteComment
 );
 
-router.delete('/comments/:commentId/replies/:replyId', authMiddleware, commentController.deleteReply);
+router.delete(
+  "/comments/:commentId/replies/:replyId",
+  authMiddleware,
+  commentController.deleteReply
+);
 
 export default router;

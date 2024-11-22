@@ -114,6 +114,21 @@ const orderController = {
     }
   },
 
+  getAllOrderPaypal: async (req: Request, res: Response) => {
+    try {
+      const Order = await OrderModel.find({ paymentMethod: "payOnline" }).sort({
+        createdAt: -1,
+      });
+      if (Order) {
+        res.json(Order);
+      } else {
+        res.status(401).json({ message: "no order" });
+      }
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  },
+
   getOrderById: async (req: Request, res: Response) => {
     try {
       const user = req.userId;
