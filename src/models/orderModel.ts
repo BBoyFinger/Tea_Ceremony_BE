@@ -5,7 +5,7 @@ const generateOrderCode = () => {
   return Math.random().toString(36).substring(2, 10).toUpperCase();
 };
 
-const OrderSchema: Schema = new Schema(
+const OrderSchema: Schema = new Schema<IOrder>(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,

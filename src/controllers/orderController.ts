@@ -3,6 +3,7 @@ import OrderModel from "../models/orderModel";
 import ProductModel from "../models/productModel";
 import UserModel from "../models/userModel";
 import HttpStatusCode from "../utils/HttpStatusCode";
+import axios from "axios";
 
 interface OrderItem {
   _id: string;
@@ -113,7 +114,33 @@ const orderController = {
       });
     }
   },
+  printOrder: async (req: Request, res: Response) => {
+    const { orderId } = req.params;
+    const order = await OrderModel.findById(orderId);
 
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    try {
+      const response = await axios.get(
+        "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/a5/gen-token",
+        {
+          headers: {
+            Authorization: process.env.GHN_API_TOKEN, // Replace with your API key
+          },
+          params: {
+            order_codes: order.order_code,
+          },
+        }
+      );
+
+      res.json(response.data);
+    } catch (error) {
+      console.error("Error fetching order:", error);
+      res.status(500).json({ message: "Error fetching order details" });
+    }
+  },
   getAllOrderPaypal: async (req: Request, res: Response) => {
     try {
       const Order = await OrderModel.find({ paymentMethod: "payOnline" }).sort({

@@ -71,11 +71,33 @@ interface IShippingAddress {
 
 export interface IOrder {
   user: mongoose.Schema.Types.ObjectId;
-  products: IOrderProduct[];
+  orderItems: {
+    product: mongoose.Schema.Types.ObjectId;
+    quantity: number;
+    price: number;
+  }[];
   totalPrice: number;
-  status: "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled";
-  paymentMethod: "Credit Card" | "PayPal" | "Cash On Delivery";
-  shippingAddress: IShippingAddress;
+  status: "Pending" | "Confirmed" | "Processing" | "Shipped" | "Delivering" | "Delivered" | "Cancelled";
+  paymentMethod?: string;
+  shippingAddress: {
+    province?: string;
+    district?: string;
+    ward?: string;
+    detail?: string;
+    name?: string;
+    phone?: string;
+  };
+  paymentResult?: {
+    id?: string;
+    status?: string;
+    update_time?: string;
+    email_address?: string;
+  };
+  order_code?: string;
+  to_ward_code?: string;
+  to_district_id?: number;
+  token?: string;
+  cancelOrder?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
