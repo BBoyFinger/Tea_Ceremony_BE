@@ -79,6 +79,11 @@ router.delete("/order/:orderId", orderController.deleteOrder);
 router.get("/orders", authMiddleware, orderController.getAllOrders);
 router.get("/order/:id", orderController.getOrderById);
 router.get("/orderPaypal", orderController.getAllOrderPaypal);
+router.post("/update/:id", orderController.updateOrderGhn);
+router.get("/orders/print/:orderId", orderController.printOrder);
+router.get("/provinces", orderController.getProvinces);
+router.get("/districts", orderController.getDistricts);
+router.get("/wards", orderController.getWards);
 
 router.get("/orders/user/:userId", orderController.getOrdersByUserId);
 router.patch(

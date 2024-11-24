@@ -40,63 +40,6 @@ app.use(
   })
 );
 
-app.get("/api/provinces", async (req, res) => {
-  try {
-    const response = await axios.get(
-      "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province",
-      {
-        headers: {
-          token: process.env.GHN_API_TOKEN, // Use the token from environment variables
-        },
-      }
-    );
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch provinces" });
-  }
-});
-
-// Fetch districts based on province ID
-app.get("/api/districts", async (req, res) => {
-  const { province_id } = req.query; // Get province_id from query parameters
-  try {
-    const response = await axios.get(
-      "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district",
-      {
-        headers: {
-          token: process.env.GHN_API_TOKEN, // Use the token from environment variables
-        },
-        params: {
-          province_id,
-        },
-      }
-    );
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: error });
-  }
-});
-
-// Fetch wards based on district ID
-app.get("/api/wards", async (req, res) => {
-  const { district_id } = req.query; // Get district_id from query parameters
-  try {
-    const response = await axios.get(
-      "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward",
-      {
-        headers: {
-          token: process.env.GHN_API_TOKEN, // Use the token from environment variables
-        },
-        params: {
-          district_id,
-        },
-      }
-    );
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch wards" });
-  }
-});
 
 app.use(express.json());
 app.use(cookieParser());

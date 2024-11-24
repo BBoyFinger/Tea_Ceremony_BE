@@ -185,6 +185,44 @@ const authController = {
     }
   },
 
+  refreshToken: async (req: Request, res: Response) => {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+      if (!refreshToken) {
+        return res.status(HttpStatusCode.Unauthorized).json({
+          message: "No refresh token provided",
+        });
+      }
+
+      const refreshSecretKey = process.env.REFRESH_SECRET_KEY;
+      if (!refreshSecretKey) {
+        console.error("Refresh secret key is not set in environment variables");
+        return res.status(500).json({ message: "Internal server error" });
+      }
+
+      jwt.verify(refreshToken, refreshSecretKey, (err: any, user: any) => {
+        if (err) {
+          return res.status(403).json({ message: "Invalid refresh token" });
+        }
+
+        // Generate new tokens
+        const tokens = generateTokens(user); // Assume generateTokens is a function that creates new tokens
+        res.cookie("refreshToken", tokens.refreshToken, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "strict",
+        });
+        res.json({ accessToken: tokens.accessToken });
+      });
+    } catch (error: any) {
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: error.message || error,
+        error: true,
+        sucess: false,
+      });
+    }
+  },
+
   getAllUser: async (req: Request, res: Response): Promise<Response> => {
     try {
       const { name, email, role } = req.query as SearchQuery;
@@ -507,3 +545,15 @@ const authController = {
 };
 
 export default authController;
+
+const generateTokens = (user: any) => {
+  const accessToken = jwt.sign({ id: user.id }, process.env.SECRET_KEY!, {
+    expiresIn: "1d",
+  });
+  const refreshToken = jwt.sign(
+    { id: user.id },
+    process.env.REFRESH_SECRET_KEY!,
+    { expiresIn: "7d" }
+  );
+  return { accessToken, refreshToken };
+};
