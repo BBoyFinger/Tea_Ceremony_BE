@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import OrderModel from "../models/orderModel";
 import querystring from "qs";
-import crypto from "crypto";
 import sha256 from "sha256";
 import { format } from "date-fns";
 import * as dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
+import { createHmac } from "crypto";
 dotenv.config();
 
 const tmnCode = process.env.VNP_TMN_CODE as string;
@@ -50,8 +50,10 @@ const paymentController = {
 
     vnp_Params = sortObject(vnp_Params);
     const signData = querystring.stringify(vnp_Params, { encode: false });
-    const hmac = crypto.createHmac("sha512", secretKey);
-    const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+    const hmac = createHmac("sha256", secretKey);
+    const signed = hmac
+      .update(new Uint8Array(Buffer.from(signData, "utf-8")))
+      .digest("hex");
     vnp_Params["vnp_SecureHash"] = signed;
     vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
 

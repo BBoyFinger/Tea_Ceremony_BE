@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es6", // or higher
-    "module": "commonjs", // for Node.js
-    "esModuleInterop": true,
-    "moduleResolution": "node",
-    "strict": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "target": "ESNext",              // JavaScript version to output
+    "module": "CommonJS",            // Module system to use (Node.js uses CommonJS)
+    "rootDir": "./src",              // Your source code directory
+    "outDir": "./dist",              // Where compiled files go
+    "esModuleInterop": true,         // Import compatibility for CommonJS
+    "strict": true,                  // Enable strict type-checking
+    "skipLibCheck": true             // Skip type checks on declaration files
   },
-  "include": ["src/**/*", "types/**/*.d.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"],           // Include all files in src folder
+  "exclude": ["node_modules"]        // Exclude node_modules
 }
