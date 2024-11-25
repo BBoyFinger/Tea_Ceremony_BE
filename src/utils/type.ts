@@ -58,18 +58,8 @@ export interface IProduct {
   brand: string; // thương hiệu
 }
 
-interface IOrderProduct {
-  product: mongoose.Schema.Types.ObjectId;
-  quantity: number;
-  price: number;
-}
 
-interface IShippingAddress {
-  address: string;
-  city: string;
-  postalCode: string;
-  country: string;
-}
+
 
 export interface IOrder {
   user: mongoose.Schema.Types.ObjectId;

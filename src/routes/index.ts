@@ -4,9 +4,7 @@ import { authMiddleware } from "../middleware/authMiddleware";
 import categoryController from "../controllers/categoryController";
 import { productController } from "../controllers/productController";
 import orderController from "../controllers/orderController";
-import addToCartModel from "../models/cartProduct";
 import blogController from "../controllers/blogController";
-import paymentControlle from "../controllers/paymentController";
 import paymentController from "../controllers/paymentController";
 import commentController from "../controllers/commentController";
 

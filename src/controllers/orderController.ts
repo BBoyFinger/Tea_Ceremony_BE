@@ -1,19 +1,12 @@
 import { Request, Response } from "express";
 import OrderModel from "../models/orderModel";
 import ProductModel from "../models/productModel";
-import UserModel from "../models/userModel";
 import HttpStatusCode from "../utils/HttpStatusCode";
 import axios from "axios";
 
 interface OrderItem {
   _id: string;
   qty: number;
-}
-
-interface Productitem {
-  productName: string;
-  quantity: number;
-  price: number;
 }
 
 interface ShippingAddress {
@@ -244,21 +237,7 @@ const orderController = {
         coupon: null,
         pick_shift: [2],
         pickup_time: 1665272576, // Assuming this remains unchanged
-        items: [
-          {
-            name: "Áo Polo",
-            code: "Polo123",
-            quantity: 1,
-            price: 2000,
-            length: 12,
-            width: 12,
-            height: 12,
-            weight: 1200,
-            category: {
-              level1: "Áo",
-            },
-          },
-        ],
+        items: items,
       };
 
       const headers = {

@@ -1,5 +1,4 @@
-import mongoose, { Schema, Types } from "mongoose";
-import { IProduct } from "../utils/type";
+import mongoose, { Schema } from "mongoose";
 
 // Tạo schema cho product
 const addToCart = new Schema(

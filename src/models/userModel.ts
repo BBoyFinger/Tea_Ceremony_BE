@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import { IUser } from "../utils/type";
 
 // Define the schema for the User model

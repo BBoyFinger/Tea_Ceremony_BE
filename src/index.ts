@@ -1,10 +1,10 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import * as dotenv from "dotenv";
 import cors from "cors";
 import connectDb from "./config/db";
 import router from "./routes";
 import cookieParser from "cookie-parser";
-import axios from "axios";
+
 
 // Initialize dotenv to load environment variables
 dotenv.config();
@@ -46,6 +46,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api", router);
+
 
 connectDb().then(() => {
   // Start the server and log the URL
