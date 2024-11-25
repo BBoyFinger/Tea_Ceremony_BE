@@ -14,7 +14,7 @@ const app = express();
 app.use(express.json({ limit: "50mb" })); // Tăng giới hạn kích thước cho JSON payload
 app.use(express.urlencoded({ limit: "50mb", extended: true })); // Tăng giới hạn cho URL-encoded payload
 
-const PORT = process.env.PORT;
+const port = process.env.PORT || 8081;
 
 // CORS Configuration
 const allowedOrigins = ["https://tea-ware-fe.vercel.app"];
@@ -47,8 +47,8 @@ app.use("/api", router);
 
 connectDb().then(() => {
   // Start the server and log the URL
-  app.listen(PORT || 8001, () => {
+  app.listen(port, () => {
     console.log("Connected to DB Successfully!");
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on port ${port}`);
   });
 });
