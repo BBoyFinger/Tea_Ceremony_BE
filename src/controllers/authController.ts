@@ -520,6 +520,7 @@ const authController = {
         currentPassword,
         user?.password as string
       );
+     
       if (!isMatch) {
         return res.status(HttpStatusCode.Unauthorized).json({
           message: "Current password is incorrect",
