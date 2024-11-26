@@ -17,28 +17,28 @@ app.use(express.urlencoded({ limit: "50mb", extended: true })); // Tăng giới 
 const port = process.env.PORT || 8081;
 
 // CORS Configuration
-const allowedOrigins = ["https://tea-ware-fe.vercel.app"];
+// const allowedOrigins = ["https://tea-ware-fe.vercel.app"];
 
-const corsOptions = {
-  origin: function (origin: any, callback: any) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true, // Cho phép gửi thông tin xác thực (cookies, etc.)
-};
+// const corsOptions = {
+//   origin: function (origin: any, callback: any) {
+//     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   credentials: true, // Cho phép gửi thông tin xác thực (cookies, etc.)
+// };
 
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000",
-//     credentials: true,
-//     optionsSuccessStatus: 200,
-//   })
-// );
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());
