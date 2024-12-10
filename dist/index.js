@@ -40,14 +40,29 @@ const express_1 = __importDefault(require("express"));
 const dotenv = __importStar(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
 const db_1 = __importDefault(require("./config/db"));
+const http_1 = __importDefault(require("http"));
 const routes_1 = __importDefault(require("./routes"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const socket_1 = require("./config/socket/socket");
 // Initialize dotenv to load environment variables
 dotenv.config();
 // Create an Express application
 const app = (0, express_1.default)();
-app.use(express_1.default.json({ limit: "50mb" })); // Tăng giới hạn kích thước cho JSON payload
-app.use(express_1.default.urlencoded({ limit: "50mb", extended: true })); // Tăng giới hạn cho URL-encoded payload
+// Create an HTTP server
+const server = http_1.default.createServer(app);
+// Initialize Socket.IO with the HTTP server
+app.use(express_1.default.json({ limit: "50mb" })); // Increase JSON payload limit
+app.use(express_1.default.urlencoded({ limit: "50mb", extended: true })); // Increase URL-encoded payload limit
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000",
+//     credentials: true,
+//     optionsSuccessStatus: 200,
+//   })
+// );
+app.use((0, cookie_parser_1.default)());
+app.use("/api", routes_1.default);
+(0, socket_1.ConnectSocket)(server);
 const port = process.env.PORT || 8081;
 // CORS Configuration
 const allowedOrigins = ["https://tea-ware-fe.vercel.app"];
@@ -62,20 +77,12 @@ const corsOptions = {
     },
     credentials: true, // Cho phép gửi thông tin xác thực (cookies, etc.)
 };
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000",
-//     credentials: true,
-//     optionsSuccessStatus: 200,
-//   })
-// );
 app.use((0, cors_1.default)(corsOptions));
-app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
 app.use("/api", routes_1.default);
 (0, db_1.default)().then(() => {
     // Start the server and log the URL
-    app.listen(port, () => {
+    server.listen(port, () => {
         console.log("Connected to DB Successfully!");
         console.log(`Server is running on port ${port}`);
     });

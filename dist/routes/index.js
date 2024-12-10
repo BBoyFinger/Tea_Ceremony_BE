@@ -12,6 +12,7 @@ const orderController_1 = __importDefault(require("../controllers/orderControlle
 const blogController_1 = __importDefault(require("../controllers/blogController"));
 const paymentController_1 = __importDefault(require("../controllers/paymentController"));
 const commentController_1 = __importDefault(require("../controllers/commentController"));
+const conversationController_1 = __importDefault(require("../controllers/conversationController"));
 const router = express_1.default.Router();
 router.post("/addtocart", authMiddleware_1.authMiddleware, authController_1.default.addToCart);
 router.post("/signup", authController_1.default.userSignUp);
@@ -76,4 +77,8 @@ router.get("/comments/:productId", commentController_1.default.getComments);
 router.post("/reply/:commentId", commentController_1.default.replyComment);
 router.delete("/comments/:commentId", authMiddleware_1.authMiddleware, commentController_1.default.deleteComment);
 router.delete("/comments/:commentId/replies/:replyId", authMiddleware_1.authMiddleware, commentController_1.default.deleteReply);
+//Convesation
+router.get("/chats", conversationController_1.default.getAllConversation);
+router.get("/chats/message", conversationController_1.default.getMessageByConversation);
+router.post("/chats/save", conversationController_1.default.postSaveMessage);
 exports.default = router;

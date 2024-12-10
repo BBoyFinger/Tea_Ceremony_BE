@@ -7,6 +7,7 @@ import orderController from "../controllers/orderController";
 import blogController from "../controllers/blogController";
 import paymentController from "../controllers/paymentController";
 import commentController from "../controllers/commentController";
+import ConversationController from "../controllers/conversationController";
 
 const router = express.Router();
 
@@ -118,5 +119,10 @@ router.delete(
   authMiddleware,
   commentController.deleteReply
 );
+
+//Convesation
+router.get("/chats", ConversationController.getAllConversation);
+router.get("/chats/message", ConversationController.getMessageByConversation);
+router.post("/chats/save", ConversationController.postSaveMessage);
 
 export default router;
