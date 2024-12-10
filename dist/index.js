@@ -50,20 +50,6 @@ dotenv.config();
 const app = (0, express_1.default)();
 // Create an HTTP server
 const server = http_1.default.createServer(app);
-// Initialize Socket.IO with the HTTP server
-app.use(express_1.default.json({ limit: "50mb" })); // Increase JSON payload limit
-app.use(express_1.default.urlencoded({ limit: "50mb", extended: true })); // Increase URL-encoded payload limit
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000",
-//     credentials: true,
-//     optionsSuccessStatus: 200,
-//   })
-// );
-app.use((0, cookie_parser_1.default)());
-app.use("/api", routes_1.default);
-(0, socket_1.ConnectSocket)(server);
-const port = process.env.PORT || 8081;
 // CORS Configuration
 const allowedOrigins = ["https://tea-ware-fe.vercel.app"];
 const corsOptions = {
@@ -75,11 +61,16 @@ const corsOptions = {
             callback(new Error("Not allowed by CORS"));
         }
     },
-    credentials: true, // Cho phép gửi thông tin xác thực (cookies, etc.)
+    credentials: true, // Allow credentials (cookies, etc.)
 };
+// Apply CORS middleware
 app.use((0, cors_1.default)(corsOptions));
+app.use(express_1.default.json({ limit: "50mb" })); // Increase JSON payload limit
+app.use(express_1.default.urlencoded({ limit: "50mb", extended: true })); // Increase URL-encoded payload limit
 app.use((0, cookie_parser_1.default)());
 app.use("/api", routes_1.default);
+(0, socket_1.ConnectSocket)(server);
+const port = process.env.PORT || 8081;
 (0, db_1.default)().then(() => {
     // Start the server and log the URL
     server.listen(port, () => {
