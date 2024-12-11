@@ -65,6 +65,13 @@ const corsOptions = {
 };
 // Apply CORS middleware
 app.use((0, cors_1.default)(corsOptions));
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000",
+//     credentials: true,
+//     optionsSuccessStatus: 200,
+//   })
+// );
 app.use(express_1.default.json({ limit: "50mb" })); // Increase JSON payload limit
 app.use(express_1.default.urlencoded({ limit: "50mb", extended: true })); // Increase URL-encoded payload limit
 app.use((0, cookie_parser_1.default)());
