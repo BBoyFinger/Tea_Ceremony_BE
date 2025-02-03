@@ -420,7 +420,6 @@ const authController = {
     removeAllProductsFromCart: async (req, res) => {
         try {
             const userId = req.userId; // Assuming user ID is passed as a URL parameter
-            console.log(userId);
             if (!userId) {
                 return res.status(HttpStatusCode_1.default.BadRequest).json({
                     message: "User ID is required",
